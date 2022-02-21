@@ -1,0 +1,64 @@
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h> // Debe descargar la Libreria que controla el I2C
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+
+//SALIDAS PARA CORRIENTE 4-20mA
+int I_OUT0 = 6;
+int I_OUT1 = 9;
+
+//SALIDAS PARA PWM 0-10V Ó 0-24V
+int PWM_OUT0 = 10;
+int PWM_OUT1 = 11;
+
+//SALIDAS DE PULSOS Y FRECUENCIAS 0-5V (Salida directa)
+int PULSE0 = 13;
+int PULSE1 = 14;
+int PULSE2 = 15;
+
+boolean act = false;
+void setup() {
+
+  Wire.begin();
+  lcd.init();
+  lcd.backlight();
+  lcd.clear();
+
+  pinMode(I_OUT0, OUTPUT);
+  pinMode(I_OUT1, OUTPUT);
+  pinMode(PWM_OUT0, OUTPUT);
+  pinMode(PWM_OUT1, OUTPUT);
+  pinMode(PULSE0, OUTPUT);
+  pinMode(PULSE1, OUTPUT);
+  pinMode(PULSE2, OUTPUT);
+
+}
+
+void loop() {
+  byte AO0;
+  byte AO1;
+  byte pwm0;
+  byte pwm1;
+  pwm1 = map(analogRead(A2), 0, 1023, 0, 255);
+  pwm0 = map(analogRead(A3), 0, 1023, 0, 255);
+  AO1 = map(analogRead(A6), 0, 1023, 0, 255);
+  AO0 = map(analogRead(A7), 0, 1023, 0, 255);
+
+  lcd.setCursor(0, 0);
+  lcd.print("PWM1 = ");
+  lcd.setCursor(8, 0);
+  lcd.print(pwm1);
+
+  lcd.setCursor(0, 1);
+  lcd.print("PWM0 = ");
+  lcd.setCursor(8, 1);
+  lcd.print(pwm0);
+  analogWrite(PWM_OUT1, pwm1);
+  analogWrite(PWM_OUT0, pwm0);
+  analogWrite(I_OUT1, AO1);
+  analogWrite(I_OUT0, AO0);
+delay(500);
+    lcd.clear();
+
+}
